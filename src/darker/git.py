@@ -221,3 +221,22 @@ class EditedLinenumsDiffer:
         )
         edited_opcodes = diff_and_get_opcodes(old, content)
         return list(opcodes_to_edit_linenums(edited_opcodes, context_lines))
+
+
+def sanitize_git_environment() -> None:
+    """Fix up git location environment variables so that git can be run
+    in other directories."""
+    variables = [
+        "GIT_DIR",
+        "GIT_INDEX",
+        "GIT_WORK_TREE",
+        "GIT_OBJECT_DIRECTORY",
+        "GIT_ALTERNATE_OBJECT_DIRECTORIES",
+        "GIT_COMMON_DIR",
+    ]
+    for var in variables:
+        if var in os.environ:
+            os.environ[var] = str(Path(os.environ[var]).resolve())
+    # An unset GIT_WORK_TREE is implicitly . when GIT_DIR is set.
+    if "GIT_DIR" in os.environ and "GIT_WORK_TREE" not in os.environ:
+        os.environ["GIT_WORK_TREE"] = str(Path.cwd().resolve())

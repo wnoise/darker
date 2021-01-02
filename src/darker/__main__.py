@@ -11,7 +11,12 @@ from darker.chooser import choose_lines
 from darker.command_line import ISORT_INSTRUCTION, parse_command_line
 from darker.config import dump_config
 from darker.diff import diff_and_get_opcodes, opcodes_to_chunks
-from darker.git import EditedLinenumsDiffer, RevisionRange, git_get_modified_files
+from darker.git import (
+    EditedLinenumsDiffer,
+    RevisionRange,
+    git_get_modified_files,
+    sanitize_git_environment,
+)
 from darker.import_sorting import apply_isort, isort
 from darker.linting import run_linter
 from darker.utils import TextDocument, get_common_root
@@ -59,6 +64,7 @@ def format_edited_parts(
              be reformatted, and skips unchanged files.
 
     """
+    sanitize_git_environment()
     git_root = get_common_root(srcs)
     changed_files = git_get_modified_files(srcs, revrange, git_root)
     edited_linenums_differ = EditedLinenumsDiffer(git_root, revrange)
