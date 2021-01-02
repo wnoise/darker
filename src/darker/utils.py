@@ -118,16 +118,6 @@ def get_path_ancestry(path: Path) -> Iterable[Path]:
         return reverse_parents
 
 
-def get_common_root(paths: Iterable[Path]) -> Path:
-    """Find the deepest common parent directory of given paths"""
-    resolved_paths = [path.resolve() for path in paths]
-    parents = reversed(list(zip(*(get_path_ancestry(path) for path in resolved_paths))))
-    for first_path, *other_paths in parents:
-        if all(path == first_path for path in other_paths):
-            return first_path
-    raise ValueError(f"Paths have no common parent Git root: {resolved_paths}")
-
-
 class Buf:
     def __init__(self, initial_bytes: bytes):
         self._buf = io.BytesIO(initial_bytes)

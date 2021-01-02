@@ -58,16 +58,6 @@ def test_isort_option_with_isort_calls_sortimports(tmpdir, run_isort, isort_args
     )
 
 
-def test_format_edited_parts_empty():
-    with pytest.raises(ValueError):
-
-        list(
-            darker.__main__.format_edited_parts(
-                [], RevisionRange("HEAD"), False, [], {}
-            )
-        )
-
-
 A_PY = ["import sys", "import os", "print( '42')", ""]
 A_PY_BLACK = ["import sys", "import os", "", 'print("42")', ""]
 A_PY_BLACK_UNNORMALIZE = ("import sys", "import os", "", "print('42')", "")

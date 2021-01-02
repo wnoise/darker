@@ -6,13 +6,7 @@ from textwrap import dedent
 
 import pytest
 
-from darker.utils import (
-    TextDocument,
-    debug_dump,
-    get_common_root,
-    get_path_ancestry,
-    joinlines,
-)
+from darker.utils import TextDocument, debug_dump, get_path_ancestry, joinlines
 
 
 def test_debug_dump(capsys):
@@ -37,21 +31,6 @@ def test_debug_dump(capsys):
 def test_joinlines():
     result = joinlines(("a", "b", "c"))
     assert result == "a\nb\nc\n"
-
-
-def test_get_common_root(tmpdir):
-    tmpdir = Path(tmpdir)
-    path1 = tmpdir / "a" / "b" / "c" / "d"
-    path2 = tmpdir / "a" / "e" / ".." / "b" / "f" / "g"
-    path3 = tmpdir / "a" / "h" / ".." / "b" / "i"
-    result = get_common_root([path1, path2, path3])
-    assert result == tmpdir / "a" / "b"
-
-
-def test_get_common_root_of_directory(tmpdir):
-    tmpdir = Path(tmpdir)
-    result = get_common_root([tmpdir])
-    assert result == tmpdir
 
 
 def test_get_path_ancestry_for_directory(tmpdir):
