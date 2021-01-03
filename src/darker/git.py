@@ -226,17 +226,33 @@ class EditedLinenumsDiffer:
 def sanitize_git_environment() -> None:
     """Fix up git location environment variables so that git can be run
     in other directories."""
+
+    def normalize_component(path: str) -> str:
+        """Turn a relative path into an absolute path"""
+        #  Blank should remain blank rather than becoming current directory.
+        if path == "":
+            return path
+        return str(Path(path).resolve())
+
     variables = [
         "GIT_DIR",
         "GIT_INDEX",
         "GIT_WORK_TREE",
         "GIT_OBJECT_DIRECTORY",
-        "GIT_ALTERNATE_OBJECT_DIRECTORIES",
         "GIT_COMMON_DIR",
+    ]
+    path_variables = [
+        "GIT_ALTERNATE_OBJECT_DIRECTORIES",
     ]
     for var in variables:
         if var in os.environ:
-            os.environ[var] = str(Path(os.environ[var]).resolve())
+            os.environ[var] = normalize_component(os.environ[var])
+    for var in path_variables:
+        if var not in os.environ:
+            continue
+        components = os.environ[var].split(":")
+        resolved_paths = [normalize_component(c) for c in components]
+        os.environ[var] = ":".join(resolved_paths)
     # An unset GIT_WORK_TREE is implicitly . when GIT_DIR is set.
     if "GIT_DIR" in os.environ and "GIT_WORK_TREE" not in os.environ:
         os.environ["GIT_WORK_TREE"] = str(Path.cwd().resolve())
